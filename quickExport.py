@@ -8,6 +8,10 @@
 import bpy;
 import os;
 
+# Allows us to print to the terminal in colors
+class bcolors:
+    OKGREEN = '\033[92m'
+
 blend_file_path = bpy.data.filepath;
 
 # Get the name of this blender file
@@ -24,3 +28,4 @@ target_file = os.path.join(directory, fbx_file_name);
 
 # Actually export the scene as an FBX
 bpy.ops.export_scene.fbx(filepath=target_file);
+print (bcolors.OKGREEN + "Exported file as FBX:\n     " + target_file);
