@@ -1,6 +1,6 @@
 # blender-quick-export
 This will be a script that will take a directory of blender files, and export them as FBX files.
-
+It takes a `-o` argument for where to output the file. If left blank the default is the current directory.
 
 ## `quickexport.py`
 
@@ -17,6 +17,21 @@ it as an FBX file.
 
 This script requires `quickExport.py` to be in the same directory as it.
 
+
+```
+usage: batchExport.py [-h] [-o OUTPUT] [-d MODELSDIR]
+
+Run this script with python: python batchExport.py -- [options]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output directory of the export. (Default is the
+                        current direectory)
+  -d MODELSDIR, --modelsdir MODELSDIR
+                        Directory of the files to export. (Default is the
+                        current directory)
+```
 
 ## `importObjs.py`
 
