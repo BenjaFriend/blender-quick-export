@@ -19,7 +19,13 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-   ## Set default values for the location of the object files
+# Select all and delete, so that we have gauranteee a clean scene
+def deleteAll():
+    bpy.ops.object.select_all(action='DESELECT');
+    bpy.ops.object.select_all(action='SELECT');
+    bpy.ops.object.delete();
+
+## Set default values for the location of the object files
 def main():
     argv = sys.argv
 
@@ -34,7 +40,6 @@ def main():
     " blender --background --python " + __file__ + " -- [options]"
     );
 
-
     parser = argparse.ArgumentParser(description=usage_text);
 
     parser.add_argument('-o','--output', action='store',
@@ -48,7 +53,7 @@ def main():
 
     args = parser.parse_args(argv); # In this example we wont use the args
 
-    # If args don't exist then stop
+    # If args don't exist then print help but continue going
     if not argv:
         print(bcolors.WARNING);
         parser.print_help();
@@ -56,14 +61,6 @@ def main():
 
     path_to_obj_files = args.objdir;
     output_dir = args.output;
-
-    print(bcolors.HEADER + "===========\nConfiguration:\n    OBJ File Dir: " + path_to_obj_files + "\n    OutputDir: " + output_dir);
-    print("=============" + bcolors.ENDC);
-    # Select all and delete, so that we have gauranteee a clean scene
-    def deleteAll():
-        bpy.ops.object.select_all(action='DESELECT');
-        bpy.ops.object.select_all(action='SELECT');
-        bpy.ops.object.delete();
 
     # Get the list of files in this directory
     file_list = os.listdir(path_to_obj_files);
@@ -77,18 +74,15 @@ def main():
         obj_file_path = os.path.join(path_to_obj_files, item);
         # Actually import the object
         bpy.ops.import_scene.obj(filepath=obj_file_path);
-        print("     Imported object:\n     " + obj_file_path);
-
+        # Remove the old file extension
         output_file_name = os.path.splitext(item)[0];
-        print(bcolors.OKBLUE + "     ITEM  File Name: " + item);
 
-        print(bcolors.ENDC);
         # Save as new file
         output_file_name = output_dir + output_file_name + '.blend';
-
         bpy.ops.wm.save_as_mainfile(filepath=output_file_name);
+
         print (bcolors.OKGREEN + '     Saved file Success\n      ' + output_file_name + bcolors.ENDC);
 
-
+#  Entry point for script
 if __name__ == '__main__':
     main();
