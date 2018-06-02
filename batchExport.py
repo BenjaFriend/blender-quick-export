@@ -23,12 +23,11 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def main():
-    # When --help or no args are given, print this help
+    # Configure args
     usage_text = (
     "Run this script with python:\n"
     " python " + __file__ + " -- [options]"
     );
-
 
     parser = argparse.ArgumentParser(description=usage_text);
 
@@ -40,27 +39,15 @@ def main():
                         type=str, default=os.getcwd(),
                         help='Directory of the files to export. (Default is the current directory)');
 
-
     args = parser.parse_args();
 
-    print bcolors.WARNING;
-    print args;
-    print bcolors.ENDC;
-
-    # If args don't exist then stop
+    # If args don't exist then print help but continue moving
     if not args:
         print("\n\nPlease enter the necessary args!");
         parser.print_help();
-        #return;
 
     outputDir = args.output;
     modelsDir = args.modelsdir;
-
-    print bcolors.WARNING + "\n==== Batch Export Info ====\n";
-    print "     Model Dir: " + modelsDir;
-    print "     Output Dir: " + outputDir;
-    print "\n===========================\n\n" + bcolors.ENDC;
-
 
     # For all the files in this directory
     for subdir, dirs, files in os.walk(modelsDir):
@@ -76,5 +63,6 @@ def main():
 
     print ( bcolors.OKGREEN + "All done all done" + bcolors.ENDC);
 
+# Script entry point
 if __name__ == '__main__':
     main();
