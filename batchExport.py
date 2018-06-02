@@ -8,35 +8,73 @@
 
 import os;
 from subprocess import call;
+import sys;
+import argparse;
 
-# Set the models directoy and output directoy to the current by default
-modelsDir = os.getcwd();
-outputDir = os.getcwd();
+# Used to print console colors
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
-## Print the info about the model location dir and the output dir
-def printDirInfo():
-    print "\n==== Batch Export Info ====\n";
+def main():
+    # When --help or no args are given, print this help
+    usage_text = (
+    "Run this script with python:\n"
+    " python " + __file__ + " -- [options]"
+    );
+
+
+    parser = argparse.ArgumentParser(description=usage_text);
+
+    parser.add_argument('-o','--output', action='store',
+                        type=str, default=os.getcwd(),
+                        help='Output directory of the export. (Default is the current direectory)');
+
+    parser.add_argument('-d','--modelsdir', action='store',
+                        type=str, default=os.getcwd(),
+                        help='Directory of the files to export. (Default is the current directory)');
+
+
+    args = parser.parse_args();
+
+    print bcolors.WARNING;
+    print args;
+    print bcolors.ENDC;
+
+    # If args don't exist then stop
+    if not args:
+        print("\n\nPlease enter the necessary args!");
+        parser.print_help();
+        #return;
+
+    outputDir = args.output;
+    modelsDir = args.modelsdir;
+
+    print bcolors.WARNING + "\n==== Batch Export Info ====\n";
     print "     Model Dir: " + modelsDir;
     print "     Output Dir: " + outputDir;
-    print "\n===========================\n\n"
+    print "\n===========================\n\n" + bcolors.ENDC;
 
-# Ask the user where their models are
-modelsDirInput = raw_input("What directory are your models in? [" + modelsDir + "] ");
 
-# If they just press enter, then use the current directory
-if modelsDirInput != '':
-    modelsDir = modelsDirInput;
+    # For all the files in this directory
+    for subdir, dirs, files in os.walk(modelsDir):
+        for file in files:
+            # If the extension on that file is a blender file
+            ext = os.path.splitext(file)[-1].lower();
+            if ext == '.blend':
+                # Export it in blender
+                blendFile = os.path.join(subdir, file);
+                print ("     Current exporting: " + blendFile);
 
-printDirInfo();
+                call(["blender", blendFile ,"--background", "--python", "quickExport.py", "--", "-o", outputDir]);
 
-# For all the files in this directory
-for subdir, dirs, files in os.walk(modelsDir):
-    for file in files:
-        # If the extension on that file is a blender file
-        ext = os.path.splitext(file)[-1].lower();
-        if ext == '.blend':
-            # Export it in blender
-            blendFile = os.path.join(subdir, file);
-            print ("     Current exporting: " + blendFile);
+    print ( bcolors.OKGREEN + "All done all done" + bcolors.ENDC);
 
-            call(["blender", blendFile ,"--background", "--python", "quickExport.py"]);
+if __name__ == '__main__':
+    main();
